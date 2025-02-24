@@ -4,7 +4,7 @@ export interface IUser {
 	address: string;
 	email: string;
 	phone: string;
-	total: number | null;
+	total: number;
 }
 
 // Интерфейс данных о товаре
