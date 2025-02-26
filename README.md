@@ -216,13 +216,13 @@ constructor(container: HTMLElement, events: IEvents)
 ```
 
 **Поля**:
-- `productListElement` — элемент, отвечающий за отображение списка карточек товаров.
-- `totalElement` — элемент, отображающий общую сумму товаров в корзине.
-- `button` — элемент, используемый для отображения стоимости всей корзины.
+- `productListElement: HTMLElement` — элемент, отвечающий за отображение списка карточек товаров.
+- `totalElement: HTMLElement` — элемент, отображающий общую сумму товаров в корзине.
+- `basketButton: HTMLElement` — элемент, используемый для отображения стоимости всей корзины.
 
 **Методы**:
-- `set List(items: HTMLElement[]): void` — устанавливает товары в разметку.
-- `set Total(value: number): void` — обновляет значение общей суммы товаров.
+- `setList(items: HTMLElement[]): void` — устанавливает товары в разметку.
+- `setTotal(value: number): void` — обновляет значение общей суммы товаров.
 
 ---
 
