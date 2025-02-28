@@ -120,21 +120,30 @@ yarn build
 **Поля**:
 - `items: IProduct[]` — массив объектов товаров приложения.
 - `basket: IProduct[]` — массив объектов товаров, добавленных в корзину.
-- `order: IOrder` — информация о заказе при покупке товара.
 - `preview: string` — превью для карточек.
 - `userData: IUser` — данные пользователя.
 - `formErrors: FormErrors` — ошибки формы.
 
 **Методы**:
 - `getItems(): IProduct[]` — метод для получения списка доступных товаров. 
-- `getTotalBasket(): IProduct[]` — метод, возвращающий общее количество товаров в корзине. 
+- `getBasket(): IProduct[]` — возвращает массив товаров в корзине. 
+- `getBasketId(): string[]` — возвращает массив идентификаторов товаров в корзине. 
+- `getUserData(): IUser` — возвращает данные пользователя. 
+- `getProducts(cards: IProduct[]): void` — устанавливает список товаров. 
 - `getTotalBasketPrice(): number` — метод для получения общей стоимости товаров в корзине. 
+- `getItemById(id: string): IProduct` — возвращает товар по его идентификатору. 
+- `getFormErrors(): FormErrors` — возвращает ошибки формы. 
+- `getPayment(): string` — возвращает ошибки формы. 
+- `setPreview(card: IProduct): void` — устанавливает товар для предпросмотра. 
+- `setItems(items: IProduct[]): void` — устанавливает список товаров. 
 - `validateContact(): boolean` — метод для проверки корректности контактных данных. 
 - `hasProductInBasket(id: string): boolean` — проверяет наличие товара в корзине. 
 - `clearOrder(): void` — очищает данные заказа. 
 - `clearBasket(): void` — метод для очистки содержимого корзины. 
 - `deleteFromBasket(id: string): void` — метод для удаления товара из корзину. 
 - `addInBasket(id: string): void` — метод для добавления товара в корзину. 
+- `addOrderField(field: keyof IUser, value: string): void` — устанавливает значение для поля данных пользователя и проверяет корректность данных. 
+- `clearOrderData(): void` — Очищает данные заказа и ошибки формы. 
 
 ---
 
@@ -150,7 +159,7 @@ constructor(container: HTMLElement, events: IEvents)
 
 **Поля**:
 - `basketCounter: HTMLElement` — содержит разметку счётчика товаров в корзине.
-- `productOnPage: HTMLElement[]` — хранит карточки товаров, отображаемые на странице.
+- `gallery: HTMLElement[]` — хранит карточки товаров, отображаемые на странице.
 - `wrapper: HTMLElement` — включает общую разметку страницы.
 - `basket: HTMLElement` — представляет кнопку для доступа к корзине.
 
@@ -159,28 +168,6 @@ constructor(container: HTMLElement, events: IEvents)
 - `set locked(value: boolean): void` — устанавливает класс, блокирующий прокрутку страницы.
 - `set counter(value: number): void` — обновляет отображение счётчика товаров в корзине.
 
----
-
-### Класс `Cards`
-
-**Описание**:  
-Класс предназначен для отображения данных карточки товара в различных элементах интерфейса, включая каталог, модальное окно отдельной карточки и каталог корзины.
-
-**Конструктор**:  
-```
-constructor(container: HTMLElement, events: IEvents)
-```
-
-**Поля**:
-- `id: string` — идентификатор карточки.
-- `description: HTMLElement` — описание карточки.
-- `image: HTMLElement` — разметка изображения карточки.
-- `title: HTMLElement` — разметка заголовка карточки.
-- `category: HTMLElement` — разметка категории карточки.
-- `price: HTMLElement` — разметка цены карточки.
-
-**Методы**:
-- `set Data(cardData: IProduct)` — заполняет атрибуты элементов карточки данными.
 
 ---
 
@@ -196,12 +183,13 @@ constructor(container: HTMLElement, events: IEvents)
 
 **Поля**:
 - `closeButton: HTMLButtonElement` — элемент разметки кнопки для закрытия модального окна.
-- `content: HTMLElement` — элемент разметки контейнера для размещения содержимого модального окна.
+- `_content: HTMLElement` — элемент разметки контейнера для размещения содержимого модального окна.
 
 **Методы**:
 - `open(): void` — открывает модальное окно.
 - `close(): void` — закрывает модальное окно.
 - `render(data: IModal): HTMLElement` — отображает содержимое.
+- `set content(value: HTMLElement): void` — устанавливает содержимое модального окна.
 
 ---
 
@@ -238,11 +226,12 @@ constructor(container: HTMLElement, events: IEvents)
 
 **Поля**:
 - `submitButton: HTMLButtonElement` — разметка кнопки для отправки формы.
-- `errors: HTMLElement` — разметка для отображения ошибок валидации.
+- `errorsElements: HTMLElement` — разметка для отображения ошибок валидации.
 
 **Методы**:
 - `changesInForm(field: keyof T, value: string): void` — регистрирует событие, связанное с конкретным полем.
-- `valid(value: boolean): void` — устанавливает состояние валидности формы.
+- `set valid(value: boolean): void` — устанавливает состояние валидности формы.
+- `set errors(value: string): void` — устанавливает текст ошибки.
 - `render(state: Partial<T> & IForm): HTMLFormElement` — отображает форму и её элементы.
 
 ---
@@ -261,9 +250,10 @@ constructor(container: HTMLElement, events: IEvents)
 - `buttonPay: HTMLButtonElement` — разметка кнопок формы оплаты.
 
 **Методы**:
-- `set Payment(value: string): void` — устанавливает класс активности на кнопку.
-- `set Address(value: string): void` — устанавливает значение поля адреса.
-- `disableButtons(): void` — убирает выделение с кнопок.
+- `set payment(value: string): void` — устанавливает класс активности на кнопку.
+- `set address(value: string): void` — устанавливает значение поля адреса.
+- `disableButtons(): void` — деактивирует кнопки выбора способа оплаты.
+- `clear(): void` — очищает форму заказа.
 
 ---
 
@@ -278,8 +268,9 @@ constructor(container: HTMLElement, events: IEvents)
 ```
 
 **Методы**:
-- `set Phone(value: string): void` — устанавливает значение поля для номера телефона.
-- `set Email(value: string): void` — устанавливает значение поля для электронной почты.
+- `set phone(value: string): void` — устанавливает значение поля для номера телефона.
+- `set email(value: string): void` — устанавливает значение поля для электронной почты.
+- `clear(): void` — очищает форму.
 
 ---
 
@@ -295,9 +286,10 @@ constructor(container: HTMLElement, actions: ISuccessAction)
 
 **Поля**:
 - `totalAmount: HTMLElement` — хранит информацию о общей сумме товаров в заказе.
+- `dismissButton: HTMLButtonElement` — хранит информацию о общей сумме товаров в заказе.
 
 **Методы**:
-- `set Total(value: string): void` — устанавливает значение общей суммы заказа.
+- `set total(value: string): void` — устанавливает значение общей суммы заказа.
 
 ---
 
@@ -362,4 +354,65 @@ constructor(container: HTMLElement, action?: ICardAction)
 **Методы**:
 - `set description(value: string): void` — устанавливает описание карточки.
 
+---
+
+### Класс `ApiService`
+
+**Описание**:  
+Класс `ApiService` предназначен для взаимодействия с `API`. Он наследуется от класса `Api` и предоставляет методы для получения списка продуктов, отправки заказов и обработки ошибок. Также добавляет CDN-путь к URL изображений продуктов.
+
+**Конструктор**:  
+```
+constructor(baseUrl: string, cdn: string, options: RequestInit = {})
+```
+
+**Поля**:
+- `readonly cdn: string` — URL CDN для преобразования путей изображений.
+
+**Методы**:
+- `getProducts(): Promise<IProduct[]>` — получает список продуктов с сервера.
+- `postOrder(order: IOrderResponse): Promise<IOrderResponse>` — отправляет заказ на сервер.
+- `private transformProductImages(items: IProduct[]): IProduct[]>` — преобразует URL изображений продуктов, добавляя CDN.
+- `private handleError(err: Error, context: string): never` — обрабатывает ошибки, возникающие при запросах.
+- `private getData<T>(endpoint: string): Promise<T>` — выполняет GET-запрос к API.
+- `private postData<T>(endpoint: string, data: any): Promise<T>` — выполняет POST-запрос к API
+
+---
+
+### Класс `Model`
+
+**Описание**:  
+Класс `Model<T>` является абстрактным базовым классом для моделей данных. Он предоставляет функциональность для работы с событиями и обновления данных. Используется для уведомления о изменениях в данных через систему событий (IEvents).
+
+**Конструктор**:  
+```
+constructor(data: Partial<T>, protected events: IEvents)
+```
+
+**Поля**:
+- `events: IEvents` — объект для работы с событиями.
+
+**Методы**:
+- `emitChanges(event: string, payload?: T): void` — уведомляет о изменениях в модели, вызывая событие.
+
+---
+
+### Класс `Component`
+
+**Описание**:  
+Класс `Component<T>` является абстрактным базовым классом для компонентов. Он предоставляет методы для работы с DOM-элементами, такие как управление классами, текстовым содержимым, состоянием блокировки, отображением элементов и изображений. Также включает метод `render` для обновления данных компонента.
+
+**Конструктор**:  
+```
+constructor(protected readonly container: HTMLElement)
+```
+
+**Методы**:
+- `toggleClass(element: HTMLElement, className: string, force?: boolean): void` — переключает класс у элемента.
+- `setText(element: HTMLElement | null, value: unknown): void` — устанавливает текстовое содержимое элемента.
+- `setDisabled(element: HTMLElement, state: boolean): void` — устанавливает состояние блокировки элемента.
+- `hideElement(element: HTMLElement): void` — скрывает элемент, устанавливая `display: none`. 
+- `showElement(element: HTMLElement): void` — показывает элемент, удаляя свойство `display`. 
+- `setImage(element: HTMLImageElement, src: string, alt?: string): void` — устанавливает изображение и альтернативный текст. 
+- `render(data: Partial<T>): HTMLElement` — Обновляет данные компонента и возвращает контейнер. 
 ---
