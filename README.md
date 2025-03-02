@@ -129,11 +129,11 @@ yarn build
 - `getBasket(): IProduct[]` — возвращает массив товаров в корзине. 
 - `getBasketId(): string[]` — возвращает массив идентификаторов товаров в корзине. 
 - `getUserData(): IUser` — возвращает данные пользователя. 
-- `getProducts(cards: IProduct[]): void` — устанавливает список товаров. 
 - `getTotalBasketPrice(): number` — метод для получения общей стоимости товаров в корзине. 
 - `getItemById(id: string): IProduct` — возвращает товар по его идентификатору. 
 - `getFormErrors(): FormErrors` — возвращает ошибки формы. 
 - `getPayment(): string` — возвращает ошибки формы. 
+- `setProducts(cards: IProduct[]): void` — метод для получения списка карточек. 
 - `setPreview(card: IProduct): void` — устанавливает товар для предпросмотра. 
 - `setItems(items: IProduct[]): void` — устанавливает список товаров. 
 - `validateContact(): boolean` — метод для проверки корректности контактных данных. 

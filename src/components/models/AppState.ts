@@ -25,8 +25,8 @@ export class AppState extends Model<IProduct> {
 		return this.userData;
 	}
 
-	//метод для получения списка карточек
-	getProducts(cards: IProduct[]) {
+	//метод для установки списка карточек
+	setProducts(cards: IProduct[]) {
 		this.items = cards;
 		this.events.emit('items:changed', { items: this.items });
 	}
@@ -118,7 +118,6 @@ export class AppState extends Model<IProduct> {
 			email: '',
 			phone: '',
 		};
-		this.events.emit('input:error', this.formErrors);
 	}
 
 	//получение ошибок формы

@@ -65,7 +65,7 @@ async function fetchProducts() {
   try {
     const data = await api.getProducts();
     if (!data) throw new Error('Данные не были получены');
-    appModel.getProducts(data);
+    appModel.setProducts(data);
   } catch (err) {
     console.error('Ошибка при загрузке продуктов:', err);
   }
@@ -147,13 +147,11 @@ events.on('basket:change', () => {
 // Добавление товара в корзину
 events.on('basket:add', (item: IProduct) => {
   appModel.addInBasket(item.id);
-  events.emit('basket:change');
 });
 
 // Удаление товара из корзины
 events.on('basket:remove', (item: IProduct) => {
   appModel.deleteFromBasket(item.id);
-  events.emit('basket:change');
 });
 
 // Открытие корзины
@@ -223,26 +221,23 @@ events.on('contacts:submit', () => {
   };
 
   api
-    .postOrder(payload)
-    .then((result) => {
-      events.emit('order:success', result);
-      appModel.clearBasket();
-      appModelPage.counter = appModel.getCountBasket();
-    })
-    .catch((error) => {
-      console.error('Ошибка отправки заказа:', error);
-    });
-});
+  .postOrder(payload)
+  .then((result) => {
+    // Преобразуем result.total в число
+    const total = typeof result.total === 'string' ? Number(result.total) : result.total;
 
-// Обработка успешного оформления заказа
-events.on('order:success', (result: ISucces) => {
-  appModalPage.render({
-    content: success.render({
-      total: result.total,
-    }),
+    appModalPage.render({
+      content: success.render({
+        total: total,
+      }),
+    });
+    order.clear();
+    contacts.clear();
+    appModel.clearOrderData();
+    appModel.clearBasket();
+    appModelPage.counter = appModel.getCountBasket();
+  })
+  .catch((error) => {
+    console.error('Ошибка отправки заказа:', error);
   });
-  order.clear();
-  contacts.clear();
-  appModel.clearOrderData();
-  appModel.clearBasket();
 });
